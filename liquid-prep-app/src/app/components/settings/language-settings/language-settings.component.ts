@@ -50,6 +50,7 @@ export class LanguageSettingsComponent implements OnInit {
   onConfirmClick() {
     const temperatureValue = this.languageFrm.get('language').value;
     console.log(temperatureValue);
+    // Change Language Function
   }
 
 

@@ -50,6 +50,8 @@ export class TemperatureSettingsComponent implements OnInit {
   onConfirmClick() {
     const temperatureValue = this.temperatureFrm.get('temperature').value;
     console.log(temperatureValue);
+
+    //Change Temperature Function
   }
 
 }
