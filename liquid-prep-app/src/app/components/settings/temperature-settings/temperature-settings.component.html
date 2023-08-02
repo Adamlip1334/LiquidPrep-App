@@ -1,0 +1,28 @@
+<app-header-title fxFlexFill  leftIconName="arrow_back" headerTitle="Test sensor" rightIconName="volume_up">
+</app-header-title>
+
+<mat-list class="menu-list">
+  <form [formGroup]="temperatureFrm">
+    <h3 class="menu-list-header" matSubheader>Current Temparature</h3>
+    <mat-list-item class="menu-list-wrapper">
+      <div class="div-form-field">
+          <mat-form-field class="menu-form-field">
+            <mat-label>Select Temperature</mat-label>
+            <mat-select formControlName="temperature">
+                <mat-option value="celsius">Celsius</mat-option>
+                <mat-option value="fahrenheit">Fahrenheit</mat-option>
+            </mat-select>
+          </mat-form-field>
+      </div>
+    </mat-list-item>
+    <mat-list-item>
+      <div class="confirm-container">
+        <button 
+          class="confirm-button" 
+          mat-raised-button color="primary"
+          (click)="onConfirmClick()"
+        >Confirm</button> 
+      </div>
+    </mat-list-item>
+  </form>
+</mat-list>

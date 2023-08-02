@@ -27,7 +27,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {
@@ -48,6 +48,8 @@ import { HeaderTitleComponent } from './components/header-title/header-title.com
 import { PastReadingsComponent } from './components/past-readings/past-readings.component';
 import { DeleteCropComponent } from './components/delete-crop/delete-crop.component';
 import { HamburgerMenuComponent } from './components/hamburger-menu/hamburger-menu.component';
+import { TemperatureSettingsComponent } from './components/settings/temperature-settings/temperature-settings.component';
+import { LanguageSettingsComponent } from './components/settings/language-settings/language-settings.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   observer: true,
@@ -75,6 +77,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PastReadingsComponent,
     DeleteCropComponent,
     HamburgerMenuComponent,
+    TemperatureSettingsComponent,
+    LanguageSettingsComponent,
   ],
   imports: [
     BrowserModule,
@@ -99,6 +103,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     MatNativeDateModule,
     MatButtonToggleModule,
     FormsModule,
+    ReactiveFormsModule,
     SwiperModule,
     FlexLayoutModule,
     MatGridListModule,

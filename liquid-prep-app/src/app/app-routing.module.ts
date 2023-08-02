@@ -10,12 +10,22 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { TestSensorComponent } from './components/test-sensor/test-sensor.component';
 import { PastReadingsComponent } from './components/past-readings/past-readings.component';
 import {CropStaticInfoResolver} from './resolve/CropStaticInfoResolver';
+import { LanguageSettingsComponent } from './components/settings/language-settings/language-settings.component';
+import { TemperatureSettingsComponent } from './components/settings/temperature-settings/temperature-settings.component';
 
 const routes: Routes = [
   { path: '', component: WelcomeComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'select-crop', loadChildren: () => import('./components/select-crop/select-crop.module')
       .then(m => m.SelectCropModule)
+  },
+  {
+    path: 'language-settings',
+    component: LanguageSettingsComponent
+  },
+  {
+    path: 'temperature-settings',
+    component: TemperatureSettingsComponent
   },
   {
     path: 'my-crops',
