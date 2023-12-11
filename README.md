@@ -61,6 +61,12 @@ The Liquid Prep App can be built and deployed in production for accessing the en
 
 Please follow the step wise instructions in the [IBM Cloud Deployment Documentation](IBM-CLOUD-SETUP.md).
 
+## Documentation
+
+Run script 'compodoc' to generate documentation
+To Run the documentation use 'run-compodoc' script
+Note: You must first generate the documentation before running the compodoc
+
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://github.com/Liquid-Prep/Liquid-Prep/blob/main/CONTRIBUTING.md) for details on our code of conduct, areas where we'd like to see community contributions, and the process for submitting pull requests to the project.

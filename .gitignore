@@ -6,6 +6,9 @@
 /out-tsc
 data
 
+#compodoc
+/liquid-prep-app/documentation
+
 # dependencies
 node_modules
 

@@ -12,7 +12,9 @@
     "serve-prod": "npm run build-prod && cd dist/liquid-prep-app && http-server -c-1",
     "deploy-github": "ng build --configuration production=true --outputPath=docs --baseHref=/Liquid-Prep/",
     "postinstall": "ngcc",
-    "http-server": "http-server -o"
+    "http-server": "http-server -o",
+    "compodoc": "npx compodoc -p tsconfig.doc.json",
+    "run-compodoc": "compodoc -s"
   },
   "private": true,
   "dependencies": {
@@ -45,6 +47,7 @@
     "@angular/cli": "^13.2.0",
     "@angular/compiler-cli": "^13.2.0",
     "@angular/language-service": "^13.2.0",
+    "@compodoc/compodoc": "^1.1.23",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "^2.0.3",
     "@types/node": "^14.11.1",
