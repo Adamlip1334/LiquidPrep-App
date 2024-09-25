@@ -1,13 +1,13 @@
 // <reference types="web-bluetooth" />
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Subject, BehaviorSubject, timer } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SensorService {
-
   /**
    * The bluetoothName value is defined in the ESP32 BLE server sketch file.
    * The value should match to exactly to what is defined in the BLE server sketch file.
@@ -18,7 +18,11 @@ export class SensorService {
   private readonly characteristicUUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
   private device: any;
   private sensorValueSub: Subject<number>;
-  constructor(private http: HttpClient) { }
+  private isConnected = new BehaviorSubject<boolean>(false);
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
+
+  constructor(private http: HttpClient) {}
 
   private get sensorValueSubject(): Subject<number> {
     if (!this.sensorValueSub) {
@@ -34,7 +38,7 @@ export class SensorService {
       esp32: 0x1234,
       sample2: 0x12345678,
       device: 0x40080698, // Arduino UNO
-      esp32test: 0x400806a8
+      esp32test: 0x400806a8,
     };
 
     let sensorMoisturePercantage: number;
@@ -62,37 +66,81 @@ export class SensorService {
 
     try {
       const device = await mobileNavigatorObject.bluetooth.requestDevice({
-        filters: [{
-          name: bluetoothName
-        }],
-        optionalServices: [serviceUUID] // Required to access service later.
+        filters: [
+          {
+            name: this.bluetoothName,
+          },
+        ],
+        optionalServices: [this.serviceUUID], // Required to access service later.
       });
 
-      // Set up event listener for when device gets disconnected.
-      device.addEventListener('gattserverdisconnected', onDisconnected);
+      this.device = device;
+      device.addEventListener(
+        'gattserverdisconnected',
+        this.onDisconnected.bind(this)
+      );
 
-      const server = await device.gatt.connect();
-
-      // Getting Service defined in the BLE server
-      const service = await server.getPrimaryService(serviceUUID);
-
-      // Getting Characteristic defined in the BLE server
-      const characteristic = await service.getCharacteristic(characteristicUUID);
-
-      const value = await characteristic.readValue();
-
-      const decoder = new TextDecoder('utf-8');
-      sensorMoisturePercantage = Number(decoder.decode(value));
-
-      function onDisconnected(event) {
-        console.log(`Device ${event.target.name} is disconnected.`);
-        console.log('Was it a normal disconnection? ', event.target.gatt.connected);
-      }
+      await this.connectToDevice();
 
       return sensorMoisturePercantage;
-
     } catch (e) {
-      window.alert('Failed to connect to sensor via Bluetooth:');
+      console.error('Failed to connect to sensor via Bluetooth:', e);
+      throw e;
     }
+  }
+
+  private async connectToDevice() {
+    if (!this.device) {
+      throw new Error('No device selected');
+    }
+
+    const server = await this.device.gatt.connect();
+    const service = await server.getPrimaryService(this.serviceUUID);
+    const characteristic = await service.getCharacteristic(
+      this.characteristicUUID
+    );
+
+    const value = await characteristic.readValue();
+    const decoder = new TextDecoder('utf-8');
+    const sensorMoisturePercantage = Number(decoder.decode(value));
+
+    this.isConnected.next(true);
+    this.reconnectAttempts = 0;
+    return sensorMoisturePercantage;
+  }
+
+  private onDisconnected(event: Event) {
+    console.log(`Device ${(event.target as any).name} is disconnected.`);
+    this.isConnected.next(false);
+    this.attemptReconnection();
+  }
+
+  private attemptReconnection() {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.error(
+        'Max reconnection attempts reached. Please restart the device.'
+      );
+      return;
+    }
+
+    console.log(
+      `Attempting to reconnect... (Attempt ${this.reconnectAttempts + 1})`
+    );
+    timer(5000) // Wait for 5 seconds before attempting to reconnect
+      .pipe(takeUntil(this.isConnected))
+      .subscribe(async () => {
+        try {
+          await this.connectToDevice();
+          console.log('Reconnection successful');
+        } catch (error) {
+          console.error('Reconnection failed:', error);
+          this.reconnectAttempts++;
+          this.attemptReconnection();
+        }
+      });
+  }
+
+  public getConnectionStatus() {
+    return this.isConnected.asObservable();
   }
 }
